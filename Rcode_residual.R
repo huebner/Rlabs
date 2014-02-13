@@ -37,7 +37,7 @@ identify(fit$fitted, fit.stdres)
 indx<-which(fit.stdres>2)
 forbes1<-forbes[-indx,]
 
-# redo regression analysis wiht this outlier removed
+# redo regression analysis with this outlier removed
 fit1<-lm(hlpr~boil, data=forbes1)
 summary(fit1) 
 # The regression fit and coefficient of determination did not change much.
