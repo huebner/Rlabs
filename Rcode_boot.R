@@ -3,7 +3,7 @@
 ### The purpose is to estimate a 95% confidence interval for the mean of a population
 
 # Sixty-watt light bulbs have an average life of 1000 hours.
-# The probability distribution of the lifetime of such a light bulb \
+# The probability distribution of the lifetime of such a light bulb 
 # is exponential with rate=0.001 
 # The median lifetime of such light bulbs is 693 hours.
 qexp(0.5,rate=0.001)
