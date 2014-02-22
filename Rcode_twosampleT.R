@@ -29,7 +29,7 @@ text(Y2001, Y2011, labels=countries, cex= 0.7, pos=3)
 abline(a=0,b=1)
 
 
-# Supplement just for fun: look at internet use over time for some countries
+# Optional: look at internet use over time for some countries
 plot(1990:2011, it[,c("United.States")], type="l", lty=1, col=1, xlab="year", 
      ylab="internet users per 100",ylim=c(0,90))
 lines(1990:2011, it[,c("Germany")], type="l", lty=1, col=2)
