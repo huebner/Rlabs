@@ -82,6 +82,7 @@ apply(results,2,sum)
 ## t interval conf.t
 ## bootstrap percentile method  conf.boot
 ## bootstrap method with centering  conf.boot.adj
+# Reference: http://stats.stackexchange.com/questions/39297/is-centering-needed-when-bootstrapping-the-sample-mean
 
 compare.ci <- function(samp, reps = 1000){
     # "samp" is the actual original observed sample
