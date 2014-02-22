@@ -27,8 +27,8 @@ mtext(result,3)
 axis(1, at=seq(130, 145, 2), pos=0)
 
 
-# create a figure and shade it for the probability P(134< W<138) 
-lb=134; ub=138
+# create a figure and shade it for the probability P(134< W<136) 
+lb=134; ub=136
 
 plot(x, px, type="n", xlab="fill weight of jars", ylab="", axes=FALSE)
 
@@ -44,6 +44,26 @@ result <- paste("P(",lb,"< W <",ub,") =",
 mtext(result,3)
 # add axes ticks and labels
 axis(1, at=seq(130, 145, 2), pos=0)
+
+
+# unknown mean: create a figure and shade it for the probability P(W<135) = 0.01
+sd=1.6
+mean=135-qnorm(0.01)*sd
+lb=100; ub=135
+
+plot(x, px, type="n", xlab="fill weight of jars", ylab="", axes=FALSE)
+
+# shade the area for which the probability is calculated
+i <- x >= lb & x <= ub
+lines(x, px)
+polygon(c(lb,x[i],ub), c(0,px[i],0), col="gray") 
+
+
+area <- pnorm(ub, mean, sd) 
+result <- paste("P(W <",ub,") =",  signif(area, digits=3), "for mean=", round(mean,2))
+mtext(result,3)
+# add axes ticks and labels
+axis(1, at=seq(130, 145, 5), pos=0)
 
 
 
