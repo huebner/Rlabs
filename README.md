@@ -9,3 +9,9 @@ A series of short R code files covering topics such as
 - probability distributions and their pdf/cdf
 - statistical inference (one sample t, one sample proportion, two sample t)
 - regression and residuals
+
+Files have several versions
+.R       (R code)
+.md     (markdown)
+.Rmd  (R markdown)
+.html   (created from R markdown with output)
