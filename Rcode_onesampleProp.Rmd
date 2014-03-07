@@ -1,0 +1,51 @@
+Rcode for inference with one sample proportions
+===================================================
+
+Simulate 100 coin tosses
+
+```{r }
+heads <- rbinom(1, size = 100, prob = .5)
+```
+
+Test whether about 50% heads came up in these coin tosses. This uses the normal approximation 
+to the binomial distribution with or without the continuity correction
+
+```{r }
+prop.test(heads, 100)          # continuity correction TRUE by default
+prop.test(heads, 100, correct = FALSE)  # without continuity correction
+prop.test(heads, 100,conf.level=0.95)   # confidence level of 0.95 is the default
+```
+
+The exact test is based on binomial probabilities:
+
+```{r }
+binom.test(heads,100)
+```
+
+Save the output in an object named temp.
+
+```{r }
+temp<-prop.test(heads, 100) 
+```
+
+```names(temp)``` shows us what output is generated and the names of the output objects.
+
+
+Confidence interval for the proportion of heads
+
+```{r }
+temp$conf.int
+```
+
+Estimated proportion
+
+```{r }
+temp$estimate
+```
+
+Pvalue for the hypothesis test $H_0: p=0.5$ versus $H_1: p \ne 0.5$
+
+```{r }
+temp$p.value
+```
+

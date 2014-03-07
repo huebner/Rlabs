@@ -19,7 +19,7 @@
 
 
 # For repeatability set the random seed
-set.seed(123456);
+set.seed(123);
  
 # generate a random sample of size n from a population representing reaction times 
 # in a simple reaction time experiment
@@ -62,10 +62,13 @@ legend("topright", lty=1, col=1:2, c("bootstrap estimates","sample estimates"))
 # instead it is better to use the matrix capabilities of R
 
 # Create a matrix where rows represent bootstrap samples
-bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=n,ncol=B)
+bootsamples<-matrix(sample(my.sample, size=n*B, replace=T), nrow=n,ncol=B)
 
 # calculate the median (or other estimate for each bootstrap sample)
 bootEst<-apply(bootsamples, 2, median)
+
+# 95% bootstrap confidence interval
+quantile(bootEst, c(0.025, 0.975))
  
 # average estimate of the median
 mean(bootEst)
@@ -73,8 +76,7 @@ mean(bootEst)
 # standard error of the estimate
 sd(bootEst)
 
-# 95% bootstrap confidence interval
-quantile(bootEst, c(0.025, 0.975))
+
 
 
 

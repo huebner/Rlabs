@@ -9,7 +9,7 @@
 # persons with no lung dysfunction.
 
 ratio<-c(0.61, 0.70, 0.63, 0.76, 0.67, 0.72, 0.64, 0.82, 0.88, 
-0.82, 0.78, 0.84, 0.83, 0.82, 0.74, 0.85, 0.73, 0.85, 0.87)
+         0.82, 0.78, 0.84, 0.83, 0.82, 0.74, 0.85, 0.73, 0.85, 0.87)
 
 # check summary statistics
 summary(ratio)
@@ -52,6 +52,5 @@ t.test(ratio, mu=0.80, alternative="less")
 
 # The pvalue is 0.052. The data provide evidence that exposure to B. subtilis may reduce 
 # the FEV1/VC ratio, but are inconclusive at the 5% significance level.
-
 
 
