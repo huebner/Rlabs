@@ -1,0 +1,267 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[sc]{mathpazo}
+\renewcommand{\sfdefault}{lmss}
+\renewcommand{\ttdefault}{lmtt}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{breakurl}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\floatpagefraction}{0.75}
+
+\makeatother
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\begin{document}
+
+
+
+
+
+
+
+
+
+The results below are generated from an R script.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{################### Rcode for inference for means (t-interval or t-test)}
+
+\hlcom{# The production of a nationally marketed detergent results in certain workers receiving}
+\hlcom{# prolonged exposure to the bacillus subtilis enzyme. Nineteen workers were tested to}
+\hlcom{# determine the effects of these exposures on various respiratory functions.  The airflow}
+\hlcom{# rate, FEV1, is the ratio of a person’s forced expiratory volume to the vital capacity, VC}
+\hlcom{# (max. volume of air a person can exhale after taking a deep breath).  If the enzyme has}
+\hlcom{# an effect, it will be to reduce the FEV1/VC ratio. The norm is 0.80 in persons with no}
+\hlcom{# lung dysfunction.}
+
+\hlstd{ratio} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{0.61}\hlstd{,} \hlnum{0.7}\hlstd{,} \hlnum{0.63}\hlstd{,} \hlnum{0.76}\hlstd{,} \hlnum{0.67}\hlstd{,} \hlnum{0.72}\hlstd{,} \hlnum{0.64}\hlstd{,} \hlnum{0.82}\hlstd{,} \hlnum{0.88}\hlstd{,} \hlnum{0.82}\hlstd{,} \hlnum{0.78}\hlstd{,} \hlnum{0.84}\hlstd{,} \hlnum{0.83}\hlstd{,} \hlnum{0.82}\hlstd{,}
+    \hlnum{0.74}\hlstd{,} \hlnum{0.85}\hlstd{,} \hlnum{0.73}\hlstd{,} \hlnum{0.85}\hlstd{,} \hlnum{0.87}\hlstd{)}
+
+\hlcom{# check summary statistics}
+\hlkwd{summary}\hlstd{(ratio)}
+\end{alltt}
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   0.610   0.710   0.780   0.766   0.835   0.880
+\end{verbatim}
+\begin{alltt}
+\hlkwd{sd}\hlstd{(ratio)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.08591
+\end{verbatim}
+\begin{alltt}
+\hlcom{# are the data symmetric or approximately normsl?}
+\hlkwd{qqnorm}\hlstd{(ratio)}
+\hlkwd{qqline}\hlstd{(ratio)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.6\linewidth]{figure/Rcode-onesampleT-Rnwunnamed-chunk-1} 
+
+}
+
+
+\begin{kframe}\begin{alltt}
+\hlcom{# t interval and t test is the same function use ?t.test to check what options are}
+\hlcom{# available A 90% confidence interval can be obtained with}
+\hlkwd{t.test}\hlstd{(ratio,} \hlkwc{mu} \hlstd{=} \hlnum{0.8}\hlstd{,} \hlkwc{conf.level} \hlstd{=} \hlnum{0.9}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## 
+## 	One Sample t-test
+## 
+## data:  ratio
+## t = -1.709, df = 18, p-value = 0.1046
+## alternative hypothesis: true mean is not equal to 0.8
+## 90 percent confidence interval:
+##  0.7321 0.8005
+## sample estimates:
+## mean of x 
+##    0.7663
+\end{verbatim}
+\begin{alltt}
+\hlcom{# save the output:}
+\hlstd{temp} \hlkwb{<-} \hlkwd{t.test}\hlstd{(ratio,} \hlkwc{mu} \hlstd{=} \hlnum{0.8}\hlstd{,} \hlkwc{conf.level} \hlstd{=} \hlnum{0.9}\hlstd{)}
+
+\hlcom{# check what you can read from the output}
+\hlkwd{names}\hlstd{(temp)}
+\end{alltt}
+\begin{verbatim}
+## [1] "statistic"   "parameter"   "p.value"     "conf.int"    "estimate"    "null.value" 
+## [7] "alternative" "method"      "data.name"
+\end{verbatim}
+\begin{alltt}
+\hlcom{# confidence interval}
+\hlstd{temp}\hlopt{$}\hlstd{conf.int}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.7321 0.8005
+## attr(,"conf.level")
+## [1] 0.9
+\end{verbatim}
+\begin{alltt}
+\hlcom{# mean}
+\hlstd{temp}\hlopt{$}\hlstd{estimate}
+\end{alltt}
+\begin{verbatim}
+## mean of x 
+##    0.7663
+\end{verbatim}
+\begin{alltt}
+\hlcom{# degrees of freedom used in calculating the pvalue or the confidence interval}
+\hlstd{temp}\hlopt{$}\hlstd{parameter}
+\end{alltt}
+\begin{verbatim}
+## df 
+## 18
+\end{verbatim}
+\begin{alltt}
+\hlcom{# or everything at once}
+\hlstd{temp}
+\end{alltt}
+\begin{verbatim}
+## 
+## 	One Sample t-test
+## 
+## data:  ratio
+## t = -1.709, df = 18, p-value = 0.1046
+## alternative hypothesis: true mean is not equal to 0.8
+## 90 percent confidence interval:
+##  0.7321 0.8005
+## sample estimates:
+## mean of x 
+##    0.7663
+\end{verbatim}
+\begin{alltt}
+\hlcom{# Answer: A 90% confidence interval for the FEV1/VC ratio is (0.73, 0.80). This includes}
+\hlcom{# the normal value of 0.80.}
+
+
+\hlcom{# However the research question is whether the ratio is lower than normal. This is a one}
+\hlcom{# sided hypothesis test, namely the alternative is HA: mu < 0.80.}
+\hlkwd{t.test}\hlstd{(ratio,} \hlkwc{mu} \hlstd{=} \hlnum{0.8}\hlstd{,} \hlkwc{alternative} \hlstd{=} \hlstr{"less"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## 
+## 	One Sample t-test
+## 
+## data:  ratio
+## t = -1.709, df = 18, p-value = 0.05231
+## alternative hypothesis: true mean is less than 0.8
+## 95 percent confidence interval:
+##    -Inf 0.8005
+## sample estimates:
+## mean of x 
+##    0.7663
+\end{verbatim}
+\begin{alltt}
+\hlcom{# The pvalue is 0.052. The data provide evidence that exposure to B. subtilis may reduce}
+\hlcom{# the FEV1/VC ratio, but are inconclusive at the 5% significance level.}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+The R session information (including the OS info, R version and all
+packages used):
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{sessionInfo}\hlstd{()}
+\end{alltt}
+\begin{verbatim}
+## R version 3.0.2 (2013-09-25)
+## Platform: x86_64-apple-darwin10.8.0 (64-bit)
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] knitr_1.5
+## 
+## loaded via a namespace (and not attached):
+## [1] evaluate_0.5.1 formatR_0.10   highr_0.3      stringr_0.6.2  tools_3.0.2
+\end{verbatim}
+\begin{alltt}
+\hlkwd{Sys.time}\hlstd{()}
+\end{alltt}
+\begin{verbatim}
+## [1] "2014-03-06 16:31:48 EST"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+\end{document}

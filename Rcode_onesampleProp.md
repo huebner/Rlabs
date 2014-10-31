@@ -22,13 +22,13 @@ prop.test(heads, 100)  # continuity correction TRUE by default
 ## 	1-sample proportions test with continuity correction
 ## 
 ## data:  heads out of 100, null probability 0.5
-## X-squared = 0.09, df = 1, p-value = 0.7642
+## X-squared = 0.25, df = 1, p-value = 0.6171
 ## alternative hypothesis: true p is not equal to 0.5
 ## 95 percent confidence interval:
-##  0.4183 0.6201
+##  0.4280 0.6296
 ## sample estimates:
 ##    p 
-## 0.52
+## 0.53
 ```
 
 ```r
@@ -40,13 +40,13 @@ prop.test(heads, 100, correct = FALSE)  # without continuity correction
 ## 	1-sample proportions test without continuity correction
 ## 
 ## data:  heads out of 100, null probability 0.5
-## X-squared = 0.16, df = 1, p-value = 0.6892
+## X-squared = 0.36, df = 1, p-value = 0.5485
 ## alternative hypothesis: true p is not equal to 0.5
 ## 95 percent confidence interval:
-##  0.4232 0.6154
+##  0.4329 0.6249
 ## sample estimates:
 ##    p 
-## 0.52
+## 0.53
 ```
 
 ```r
@@ -58,13 +58,13 @@ prop.test(heads, 100, conf.level = 0.95)  # confidence level of 0.95 is the defa
 ## 	1-sample proportions test with continuity correction
 ## 
 ## data:  heads out of 100, null probability 0.5
-## X-squared = 0.09, df = 1, p-value = 0.7642
+## X-squared = 0.25, df = 1, p-value = 0.6171
 ## alternative hypothesis: true p is not equal to 0.5
 ## 95 percent confidence interval:
-##  0.4183 0.6201
+##  0.4280 0.6296
 ## sample estimates:
 ##    p 
-## 0.52
+## 0.53
 ```
 
 
@@ -80,13 +80,13 @@ binom.test(heads, 100)
 ## 	Exact binomial test
 ## 
 ## data:  heads and 100
-## number of successes = 52, number of trials = 100, p-value = 0.7644
+## number of successes = 53, number of trials = 100, p-value = 0.6173
 ## alternative hypothesis: true probability of success is not equal to 0.5
 ## 95 percent confidence interval:
-##  0.4178 0.6210
+##  0.4276 0.6306
 ## sample estimates:
 ## probability of success 
-##                   0.52
+##                   0.53
 ```
 
 
@@ -109,7 +109,7 @@ temp$conf.int
 ```
 
 ```
-## [1] 0.4183 0.6201
+## [1] 0.4280 0.6296
 ## attr(,"conf.level")
 ## [1] 0.95
 ```
@@ -124,7 +124,7 @@ temp$estimate
 
 ```
 ##    p 
-## 0.52
+## 0.53
 ```
 
 
@@ -136,7 +136,7 @@ temp$p.value
 ```
 
 ```
-## [1] 0.7642
+## [1] 0.6171
 ```
 
 

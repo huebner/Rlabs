@@ -14,7 +14,7 @@ Reference: Callreus M, McGuigan F, Ringsberg K, Akesson K.  Self-reported recrea
 The low or moderate impact group had BMD at the trochanter of 0.823 grams per square centimeter.
 The null hypothesis is "There is no change in BMD for the high impact exercise group." The alternative hypothesis is "There is a positive change in BMD for the high impact group." The mean difference in measures as percent change from 0.823, so this is a hypothesis test for the mean.
 
-*Note: Statistical analyses would consider adjusting for smoking, alcohol assumption, or body amss index. For our purposes we define the baseline to be 0.823 nd consider the change in the high impact exercise group and do not consider adjustment factors.*
+*Note: Statistical analyses would consider adjusting for smoking, alcohol assumption, or body mass index. For our purposes we define the baseline to be 0.823 nd consider the change in the high impact exercise group and do not consider adjustment factors.*
  
 $$
 \begin{aligned}
@@ -24,8 +24,10 @@ H_1: && \mu > 0
 $$
 
 
-The probability of a type I error is P(type I) = $P(T > t_{\alpha/2, n-1} | \mu =0) = \alpha$.
-The probability of a type II error is P(type II error) = $P(T > t_{\alpha/2, n-1} | \mu =\mu_1)$, and the statistical power is 1-P(type II error). For the power and type II error we assume that $H_1$ is true, hence the mean from $H_1$ must be assumed to be known. 
+The probability of a type I error is P(type I) = P (falsely reject $H_0$) = $P(T > t_{\alpha/2, n-1} | \mu =0) = \alpha$.\\
+The probability of a type II error is P(type II error) = P(fail to reject $H_0$ when $H_A$ is true) = $P(T <  t_{\alpha/2, n-1} | \mu =\mu_1)$.
+The statistical power is 1-P(type II error). We can also think about power = $P(\mbox{reject } H_0 | H_A \mbox{ is true})$. Hence power = $P(T > t_{\alpha/2, n-1} | \mu =\mu_1)$.
+For the power and type II error we assume that $H_1$ is true, hence the mean from $H_1$ must be assumed to be known. 
 
 ***********
 
@@ -47,7 +49,8 @@ We have one sample, namely the high impact exercise group, and compare their BMD
 alpha = 0.05
 d = 0.03  # difference in means
 s = 0.153  # standard deviation
-bmd <- power.t.test(power = 0.8, delta = d, sd = s, sig.level = alpha, type = "one.sample")
+bmd <- power.t.test(power = 0.8, delta = d, sd = s, sig.level = alpha, type = "one.sample", 
+    alternative = "one.sided")
 bmd
 ```
 
@@ -55,27 +58,28 @@ bmd
 ## 
 ##      One-sample t test power calculation 
 ## 
-##               n = 206.1
+##               n = 162.2
 ##           delta = 0.03
 ##              sd = 0.153
 ##       sig.level = 0.05
 ##           power = 0.8
-##     alternative = two.sided
+##     alternative = one.sided
 ```
 
 
-This requires a sample size of 207 women in the high impact exercise group.
+This requires a sample size of 163 women in the high impact exercise group.
 
 
 
-### If there is a fixed sample size of n=250, what % change in bone mineral density could be detected at the significance level 0.05 with 80% power?
+### If there is a fixed sample size of n=200, what % change in bone mineral density could be detected at the significance level 0.05 with 80% power?
 
 
 
 ```r
 alpha = 0.05
 s = 0.153  # standard deviation
-bmd <- power.t.test(power = 0.8, n = 250, sd = s, sig.level = alpha, type = "one.sample")
+bmd <- power.t.test(power = 0.8, n = 200, sd = s, sig.level = alpha, type = "one.sample", 
+    alternative = "one.sided")
 bmd
 ```
 
@@ -83,12 +87,12 @@ bmd
 ## 
 ##      One-sample t test power calculation 
 ## 
-##               n = 250
-##           delta = 0.0272
+##               n = 200
+##           delta = 0.02698
 ##              sd = 0.153
 ##       sig.level = 0.05
 ##           power = 0.8
-##     alternative = two.sided
+##     alternative = one.sided
 ```
 
 
@@ -126,9 +130,9 @@ Calculating the power for these settings:
 
 ```r
 for (i in 1:length(n)) {
-    margin[i] <- (-qt(p = alpha/2, df = n[i] - 1)) * s/sqrt(n[i])
+    margin[i] <- qt(p = alpha/2, df = n[i] - 1) * s/sqrt(n[i])
     delta[i] <- (margin[i] - mu1)/(s/sqrt(n[i]))
-    power.t[i] <- 1 - pt(delta[i], df = n[i] - 1)
+    power.t[i] <- 1 - pt(delta[i], df = n[i] - 1)  # corresponds to HA: mu > mu0
 }
 ```
 

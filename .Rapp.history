@@ -1,0 +1,819 @@
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(100,1500), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("95% Bootstrap confidence intervals"))#
+  title(paste("1000 Bootstrap samples from sample size", n))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+    abline(v=qexp(0.5, rate=0.001), col="red", lwd=2) #
+   } #
+n=30#
+K=25#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+	x <- rexp(n, rate=0.001)#
+	bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+	bootEst<-apply(bootsamples, 1, median) #
+	results[i,]<-quantile(bootEst, c(0.025, 0.975))	#
+}#
+cis(results,K)
+B=1000
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(100,1500), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("95% Bootstrap confidence intervals"))#
+  title(paste(B, " Bootstrap samples from sample size", n))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+    abline(v=qexp(0.5, rate=0.001), col="red", lwd=2) #
+   } #
+n=30#
+K=25#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+	x <- rexp(n, rate=0.001)#
+	bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+	bootEst<-apply(bootsamples, 1, median) #
+	results[i,]<-quantile(bootEst, c(0.025, 0.975))	#
+}#
+cis(results,K)
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+	x <- rexp(n, rate=0.001)#
+	bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+	bootEst<-apply(bootsamples, 1, median) #
+	results[i,]<-quantile(bootEst, c(0.025, 0.975))	#
+}#
+cis(results,K)
+n<-30
+x<-rnorm(30)
+B<-1000#
+bootEst <- rep(NA,B)#
+for(i in 1:B){bootEst[i]<- mean(sample(x, size=n, replace=T))}#
+# for comparison calculate  means for 1000 samples drawn from the population#
+sampledEst <- rep(NA,1000)#
+for(i in 1:1000){sampledEst[i] <- mean(rexp(30, rate=0.001))} #
+#
+# Compare the distribution of the sample means for the population and the bootstrap means#
+# from the observed sample#
+plot(density(bootEst)); #
+lines(density(sampledEst),col="red")#
+legend("topright", lty=1, col=1:2, c("bootstrap estimates","sample estimates"))
+sampleEst
+sampledEst
+sampledEst <- rep(NA,1000)#
+for(i in 1:1000){sampledEst[i] <- mean(rnorm(30))} #
+# Compare the distribution of the sample means for the population and the bootstrap means#
+# from the observed sample#
+plot(density(bootEst)); #
+lines(density(sampledEst),col="red")#
+legend("topright", lty=1, col=1:2, c("bootstrap estimates","sample estimates"))
+plot(density(bootEst), main=""); #
+lines(density(sampledEst),col="red")#
+legend("topright", lty=1, col=1:2, c("bootstrap estimates","sample estimates"))
+R code Bootstrap #########################
+#
+### The purpose is the estimate a 95% confidence interval for the median of a population#
+#
+# Sixty-watt light bulbs have an average life of 1000 hours.#
+# The probability distribution of the lifetime of such a light bulb is exponential with rate=0.001 #
+# The median lifetime is 693 hours#
+qexp(0.5, rate=0.001)#
+# For repeatability set the random seed#
+set.seed(123456); #
+# generate a random sample of size n from a population#
+n<-50#
+x <- rexp(n, rate=0.001)#
+#### First method: Step-by-step calculation#
+# Calculate the median for each of the 1000 bootstrap samples#
+B<-1000#
+bootEst <- rep(NA,B)#
+for(i in 1:B){bootEst[i]<- median(sample(x, size=n, replace=T))}#
+# average estimate of the median#
+mean(bootEst)#
+# standard error of the estimate#
+sd(bootEst)#
+# Calculate a 95% bootstrap confidence interval#
+quantile(bootEst, c(0.025, 0.975))#
+#
+# for comparison calculate  medians for 1000 samples drawn from the population#
+sampledEst <- rep(NA,1000)#
+for(i in 1:1000){sampledEst[i] <- median(rexp(30, rate=0.001))}#
+# average estimate of the median#
+mean(sampledEst) #
+#### Second method: Use the boot package in R#
+library(boot)#
+# define a function for which we wish to calculate a bootstrap estimate#
+fn <- function(x,i){median(x[i])}#
+# calculate the bootstrap estimate and standard error#
+ bootresult <- boot(x,fn,B)#
+bootresult#
+# get 95% bootstrap confidence interval#
+boot.ci(bootresult)#
+#### Third method: Use the the power of matrices in R#
+# it is not efficient to write loops in R (e.g for-loop)#
+# instead it is better to use the matrix capabilities of R#
+#
+# Create a matrix where rows represent bootstrap samples#
+bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+# calculate the median (or other estiamte for each bootstrap sample)#
+bootEst<-apply(bootsamples, 1, median) #
+# average estimate of the median#
+mean(bootEst)#
+# standard error of the estimate#
+sd(bootEst)#
+# 95% bootstrap confidence interval#
+quantile(bootEst, c(0.025, 0.975))#
+### Width of the confidence intervals#
+#
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(100,1500), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("95% Bootstrap confidence intervals"))#
+  title(paste(B, " Bootstrap samples from sample size", n))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+    abline(v=qexp(0.5, rate=0.001), col="red", lwd=2) #
+   } #
+n=30#
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+	x <- rexp(n, rate=0.001)#
+	bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+	bootEst<-apply(bootsamples, 1, median) #
+	results[i,]<-quantile(bootEst, c(0.025, 0.975))	#
+}#
+cis(results,K)
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(100,1500), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("95% Bootstrap confidence intervals"))#
+  title(paste("Each created from ", B, "Bootstrap samples from a sample of size", n))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+    abline(v=qexp(0.5, rate=0.001), col="red", lwd=2) #
+   } #
+n=30#
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+	x <- rexp(n, rate=0.001)#
+	bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+	bootEst<-apply(bootsamples, 1, median) #
+	results[i,]<-quantile(bootEst, c(0.025, 0.975))	#
+}#
+cis(results,K)
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(100,1500), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("Each CI created from ", B, "Bootstrap samples from a sample of size", n) )#
+  title(paste("95% Bootstrap confidence intervals"))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+    abline(v=qexp(0.5, rate=0.001), col="red", lwd=2) #
+   } #
+n=30#
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+	x <- rexp(n, rate=0.001)#
+	bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+	bootEst<-apply(bootsamples, 1, median) #
+	results[i,]<-quantile(bootEst, c(0.025, 0.975))	#
+}#
+cis(results,K)
+n<-50#
+x <- rnorm(n, mean=220, sd=60)
+hist(x)
+n=1000;x <- rnorm(n, mean=220, sd=60)
+hist(x, nclass=20)
+n<-50#
+x <- rnorm(n, mean=220, sd=60)#
+#### First method: Step-by-step calculation#
+# Calculate the median for each of the 1000 bootstrap samples#
+B<-1000#
+bootEst <- rep(NA,B)#
+for(i in 1:B){bootEst[i]<- median(sample(x, size=n, replace=T))}#
+#
+# average estimate of the median#
+mean(bootEst)#
+#
+# standard error of the estimate#
+sd(bootEst)#
+#
+# Calculate a 95% bootstrap confidence interval#
+quantile(bootEst, c(0.025, 0.975))#
+#
+# for comparison calculate  medians for 1000 samples drawn from the population#
+sampledEst <- rep(NA,1000)#
+for(i in 1:1000){sampledEst[i] <- median(rnorm(n, 220,60))}#
+# average estimate of the median#
+mean(sampledEst) #
+#
+#### Second method: Use the the power of matrices in R#
+# it is not efficient to write loops in R (e.g for-loop)#
+# instead it is better to use the matrix capabilities of R#
+#
+# Create a matrix where rows represent bootstrap samples#
+bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+#
+# calculate the median (or other estimate for each bootstrap sample)#
+bootEst<-apply(bootsamples, 1, median)#
+# average estimate of the median#
+mean(bootEst)#
+#
+# standard error of the estimate#
+sd(bootEst)#
+#
+# 95% bootstrap confidence interval#
+quantile(bootEst, c(0.025, 0.975))#
+#
+# Compare the distribution of the sample means for the population and the bootstrap means#
+# from the observed sample#
+plot(density(bootEst), main=""); #
+lines(density(sampledEst),col="red")#
+legend("topright", lty=1, col=1:2, c("bootstrap estimates","sample estimates"))
+n<-50#
+x <- rnorm(n, mean=220, sd=50)#
+#### First method: Step-by-step calculation#
+# Calculate the median for each of the 1000 bootstrap samples#
+B<-1000#
+bootEst <- rep(NA,B)#
+for(i in 1:B){bootEst[i]<- median(sample(x, size=n, replace=T))}#
+#
+# average estimate of the median#
+mean(bootEst)#
+#
+# standard error of the estimate#
+sd(bootEst)#
+#
+# Calculate a 95% bootstrap confidence interval#
+quantile(bootEst, c(0.025, 0.975))#
+#
+# for comparison calculate  medians for 1000 samples drawn from the population#
+sampledEst <- rep(NA,1000)#
+for(i in 1:1000){sampledEst[i] <- median(rnorm(n, 220,50))}#
+# average estimate of the median#
+mean(sampledEst) #
+#
+#### Second method: Use the the power of matrices in R#
+# it is not efficient to write loops in R (e.g for-loop)#
+# instead it is better to use the matrix capabilities of R#
+#
+# Create a matrix where rows represent bootstrap samples#
+bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=B,ncol=n)#
+#
+# calculate the median (or other estimate for each bootstrap sample)#
+bootEst<-apply(bootsamples, 1, median)#
+# average estimate of the median#
+mean(bootEst)#
+#
+# standard error of the estimate#
+sd(bootEst)#
+#
+# 95% bootstrap confidence interval#
+quantile(bootEst, c(0.025, 0.975))#
+#
+# Compare the distribution of the sample means for the population and the bootstrap means#
+# from the observed sample#
+plot(density(bootEst), main=""); #
+lines(density(sampledEst),col="red")#
+legend("topright", lty=1, col=1:2, c("bootstrap estimates","sample estimates"))
+x<-rnorm(50)
+samp<-x
+qt(c(0.975,0.025))
+n=50
+qt(c(0.975,0.025), df=n-1)
+mean(samp)-qt(c(0.975,0.025), df=n-1)*sd(samp)/sqrt(n)
+reps=1000
+n <- length(samp)#
+#
+    boot.int <- numeric(reps)#
+    t.int <- numeric(reps)#
+#
+    for(i in 1:reps){#
+        s <- sample(samp, replace=TRUE)#
+        # "s" is a bootstrap sample#
+        boot.int[i] <- mean(s)#
+    }
+conf.boot <- quantile(boot.p, probs=c(0.025, 0.975))
+conf.boot <- quantile(boot.int, probs=c(0.025, 0.975))
+conf.boot
+compare.ints <- function(samp, reps = 1000){#
+    # "samp" is the actual original observed sample#
+#
+    n <- length(samp)#
+#
+    boot.int <- numeric(reps)#
+    t.int <- numeric(reps)#
+#
+    for(i in 1:reps){#
+        s <- sample(samp, replace=TRUE)#
+        # "s" is a bootstrap sample#
+        boot.int[i] <- mean(s)#
+    }#
+#
+    # conf.t <- mean(samp)-qt(c(0.975,0.025), df=n-1)*sd(samp)/sqrt(n)#
+    onf.t<- t.test(samp)$conf.int#
+    conf.boot <- quantile(boot.int, probs=c(0.025, 0.975))#
+#
+    return(rbind(conf.t, conf.boot, "Trad T test"=t.test(samp)$conf.int))#
+}
+pop<-rexp(1000,rate=0.001)#
+n=30#
+x<-sample(pop,n)
+mean(pop)
+compare.ints(x)
+compare.ints <- function(samp, reps = 1000){#
+    # "samp" is the actual original observed sample#
+#
+    n <- length(samp)#
+#
+    boot.int <- numeric(reps)#
+    t.int <- numeric(reps)#
+#
+    for(i in 1:reps){#
+        s <- sample(samp, replace=TRUE)#
+        # "s" is a bootstrap sample#
+        boot.int[i] <- mean(s)#
+    }#
+#
+    # conf.t <- mean(samp)-qt(c(0.975,0.025), df=n-1)*sd(samp)/sqrt(n)#
+    conf.t<- t.test(samp)$conf.int#
+    conf.boot <- quantile(boot.int, probs=c(0.025, 0.975))#
+#
+    return(rbind(conf.t, conf.boot, "Trad T test"=t.test(samp)$conf.int))#
+}
+compare.ints(x)
+set.seed(123)#
+sims <- 1000#
+results <- matrix(FALSE, sims,2)#
+colnames(results) <- c("t-interval", "Bootstrap percentile")#
+#
+for(i in 1:sims){#
+    pop <- rexp(3000, rate=0.001)#
+    my.sample <- sample(pop,n)#
+    mu <- mean(pop)#
+    x <- compare.boots(my.sample)#
+    for(j in 1:2){#
+        results[i,j] <- x[j,1] < mu & x[j,2] > mu#
+    }#
+}#
+#
+apply(results,2,sum)
+simulation study#
+set.seed(123)#
+sims <- 1000#
+results <- matrix(FALSE, sims,2)#
+colnames(results) <- c("t-interval", "Bootstrap percentile")#
+#
+for(i in 1:sims){#
+    pop <- rexp(3000, rate=0.001)#
+    my.sample <- sample(pop,n)#
+    mu <- mean(pop)#
+    x <- compare.ints(my.sample)#
+    for(j in 1:2){#
+        results[i,j] <- x[j,1] < mu & x[j,2] > mu#
+    }#
+}
+apply(results,2,sum)
+compare.ints <- function(samp, reps = 1000){#
+    # "samp" is the actual original observed sample#
+#
+    n <- length(samp)#
+#
+    boot.int <- numeric(reps)#
+    boot.adj <- numeric(reps)#
+#
+    for(i in 1:reps){#
+        s <- sample(samp, replace=TRUE)#
+        # "s" is a bootstrap sample#
+        boot.int[i] <- mean(s)#
+        boot.adj[i] <- (mean(s)-mean(samp)) / (sd(s)/sqrt(n))#
+    }#
+#
+    # conf.t <- mean(samp)-qt(c(0.975,0.025), df=n-1)*sd(samp)/sqrt(n)#
+    conf.t<- t.test(samp)$conf.int#
+    conf.boot <- quantile(boot.int, probs=c(0.025, 0.975))#
+    conf.boot.adj<- mean(samp)-quantile(boot.t, probs=c(0.975,0.025))*sd(samp)/sqrt(n)#
+#
+    #return(rbind(conf.t, conf.boot, "Trad T test"=t.test(samp)$conf.int))#
+    return(rbind(conf.t, conf.boot, conf.boot.adj)#
+}#
+#
+pop<-rexp(1000,rate=0.001)#
+n=20#
+x<-sample(pop,n)#
+mean(pop)#
+compare.ints(x)
+compare.ints <- function(samp, reps = 1000){#
+    # "samp" is the actual original observed sample#
+#
+    n <- length(samp)#
+#
+    boot.int <- numeric(reps)#
+    boot.adj <- numeric(reps)#
+#
+    for(i in 1:reps){#
+        s <- sample(samp, replace=TRUE)#
+        # "s" is a bootstrap sample#
+        boot.int[i] <- mean(s)#
+        boot.adj[i] <- (mean(s)-mean(samp)) / (sd(s)/sqrt(n))#
+    }#
+#
+    # conf.t <- mean(samp)-qt(c(0.975,0.025), df=n-1)*sd(samp)/sqrt(n)#
+    conf.t<- t.test(samp)$conf.int#
+    conf.boot <- quantile(boot.int, probs=c(0.025, 0.975))#
+    conf.boot.adj<- mean(samp)-quantile(boot.t, probs=c(0.975,0.025))*sd(samp)/sqrt(n)#
+#
+    return(rbind(conf.t, conf.boot, conf.boot.adj)#
+}
+compare.ints <- function(samp, reps = 1000){#
+    # "samp" is the actual original observed sample#
+#
+    n <- length(samp)#
+#
+    boot.int <- numeric(reps)#
+    boot.adj <- numeric(reps)#
+#
+    for(i in 1:reps){#
+        s <- sample(samp, replace=TRUE)#
+        # "s" is a bootstrap sample#
+        boot.int[i] <- mean(s)#
+        boot.adj[i] <- (mean(s)-mean(samp)) / (sd(s)/sqrt(n))#
+    }#
+#
+    # conf.t <- mean(samp)-qt(c(0.975,0.025), df=n-1)*sd(samp)/sqrt(n)#
+    conf.t<- t.test(samp)$conf.int#
+    conf.boot <- quantile(boot.int, probs=c(0.025, 0.975))#
+    conf.boot.adj<- mean(samp)-quantile(boot.t, probs=c(0.975,0.025))*sd(samp)/sqrt(n)#
+#
+    return(rbind(conf.t, conf.boot, conf.boot.adj))#
+}
+pop<-rexp(1000,rate=0.001)#
+n=20#
+x<-sample(pop,n)#
+mean(pop)#
+compare.ints(x)
+compare.ints <- function(samp, reps = 1000){#
+    # "samp" is the actual original observed sample#
+#
+    n <- length(samp)#
+#
+    boot.int <- numeric(reps)#
+    boot.adj <- numeric(reps)#
+#
+    for(i in 1:reps){#
+        s <- sample(samp, replace=TRUE)  # bootstrap sample#
+        boot.int[i] <- mean(s)#
+        boot.adj[i] <- (mean(s)-mean(samp)) / (sd(s)/sqrt(n))#
+    }#
+#
+    # conf.t <- mean(samp)-qt(c(0.975,0.025), df=n-1)*sd(samp)/sqrt(n)#
+    conf.t<- t.test(samp)$conf.int#
+    conf.boot <- quantile(boot.int, probs=c(0.025, 0.975))#
+    conf.boot.adj<- mean(samp)-quantile(boot.adj, probs=c(0.975,0.025))*sd(samp)/sqrt(n)#
+#
+    return(rbind(conf.t, conf.boot, conf.boot.adj))#
+}#
+#
+pop<-rexp(1000,rate=0.001)#
+n=20#
+x<-sample(pop,n)#
+mean(pop)#
+compare.ints(x)
+simulation study#
+set.seed(123)#
+sims <- 1000#
+results <- matrix(FALSE, sims,3)#
+colnames(results) <- c("t-interval", "Bootstrap percentile", "Bootstrap centered")#
+#
+for(i in 1:sims){#
+    pop <- rexp(10000, rate=0.001)#
+    my.sample <- sample(pop,n)#
+    mu <- mean(pop)#
+    x <- compare.ints(my.sample)#
+    for(j in 1:3){#
+        results[i,j] <- x[j,1] < mu & x[j,2] > mu#
+    }#
+}#
+#
+apply(results,2,sum)
+K=50#
+#
+t.int<-reps(K)#
+xx<-replicate(K, rexp(n, rate=0.001))#
+for(i in 1:K)#
+t.int[i]<-t.test(x, conf.level=0.95)$conf.int#
+}
+t.int<-numeric(K)#
+xx<-replicate(K, rexp(n, rate=0.001))#
+for(i in 1:K)#
+t.int[i]<-t.test(x, conf.level=0.95)$conf.int#
+}
+for(i in 1:K){#
+t.int[i]<-t.test(x, conf.level=0.95)$conf.int#
+}
+head(t.int)
+dim(t.int)
+mean(x)
+t.test(x, conf.level=0.95)$conf.int
+dim(xx)
+for(i in 1:K){#
+t.int[i]<-t.test(xx[,i], conf.level=0.95)$conf.int#
+}
+dim(t.int)
+i
+t.test(xx[,i], conf.level=0.95)$conf.int
+t.int<-numeric(K)#
+xx<-replicate(K, rexp(n, rate=0.001))#
+for(i in 1:K){#
+t.int[i,]<-t.test(xx[,i], conf.level=0.95)$conf.int#
+}
+t.int<-matrix(FALSE, K, 2)#
+xx<-replicate(K, rexp(n, rate=0.001))#
+for(i in 1:K){#
+t.int[i,]<-t.test(xx[,i], conf.level=0.95)$conf.int#
+}
+dim(t.int)
+t.int
+K=50#
+mu=1000#
+#
+xx<-replicate(K, rexp(n, rate=1/mu))#
+#
+results<-matrix(FALSE, K,2)#
+t.int<-matrix(FALSE, K, 2)#
+for(i in 1:K){#
+t.int[i,]<-t.test(xx[,i], conf.level=0.95)$conf.int#
+results[i,1]<-t.int[i,1]>mu & t.int[i,2]<mu#
+}
+results
+results<-matrix(FALSE, K,2)#
+t.int<-matrix(FALSE, K, 2)#
+for(i in 1:K){#
+t.int[i,]<-t.test(xx[,i], conf.level=0.95)$conf.int#
+results[i,1]<-t.int[i,1]<mu & t.int[i,2]>mu#
+}#
+apply(results,2,sum)
+K=1000#
+mu=5#
+xx<-replicate(K, rexp(n, rate=1/mu))#
+#
+results<-matrix(FALSE, K,2)#
+t.int<-matrix(FALSE, K, 2)#
+for(i in 1:K){#
+t.int[i,]<-t.test(xx[,i], conf.level=0.95)$conf.int#
+results[i,1]<-t.int[i,1]<mu & t.int[i,2]>mu#
+}#
+apply(results,2,sum)
+K=1000#
+mu=0#
+xx<-replicate(K, rnorm(n, mean=mu, sd=1))#
+#
+results<-matrix(FALSE, K,2)#
+t.int<-matrix(FALSE, K, 2)#
+for(i in 1:K){#
+t.int[i,]<-t.test(xx[,i], conf.level=0.95)$conf.int#
+results[i,1]<-t.int[i,1]<mu & t.int[i,2]>mu#
+}#
+apply(results,2,sum)
+K=1000#
+mu=1000#
+xx<-replicate(K, rexp(n, rate=1/mu))#
+#
+results<-matrix(FALSE, K,2)#
+t.int<-matrix(FALSE, K, 2)#
+for(i in 1:K){#
+t.int[i,]<-t.test(xx[,i], conf.level=0.95)$conf.int#
+results[i,1]<-t.int[i,1]<mu & t.int[i,2]>mu#
+}#
+apply(results,2,sum)
+sims <- 1000#
+results <- matrix(FALSE, sims,3)#
+colnames(results) <- c("t-interval", "Bootstrap percentile", "Bootstrap centered")#
+#
+for(i in 1:sims){#
+    pop <- rexp(10000, rate=1/mu)#
+    my.sample <- sample(pop,n)#
+    mu <- mean(pop)#
+    x <- compare.ints(my.sample)#
+    for(j in 1:3){#
+        results[i,j] <- x[j,1] < mu & x[j,2] > mu#
+    }#
+}#
+#
+apply(results,2,sum)
+for(i in 1:sims){#
+    x <- rexp(n, rate=1/mu)#
+    y <- compare.ci(my.sample)#
+    for(j in 1:3){#
+        results[i,j] <- y[j,1] < mu & y[j,2] > mu#
+    }#
+}#
+#
+apply(results,2,sum)
+compare.ci <- function(samp, reps = 1000){#
+    # "samp" is the actual original observed sample#
+#
+    n <- length(samp)#
+#
+    boot.int <- numeric(reps)#
+    boot.adj <- numeric(reps)#
+#
+    for(i in 1:reps){#
+        s <- sample(samp, replace=TRUE)  # bootstrap sample#
+        boot.int[i] <- mean(s)#
+        boot.adj[i] <- (mean(s)-mean(samp)) / (sd(s)/sqrt(n))  # centered bootstrap estimate#
+    }#
+#
+    # conf.t <- mean(samp)-qt(c(0.975,0.025), df=n-1)*sd(samp)/sqrt(n)#
+    conf.t<- t.test(samp)$conf.int#
+    conf.boot <- quantile(boot.int, probs=c(0.025, 0.975))#
+    conf.boot.adj<- mean(samp)-quantile(boot.adj, probs=c(0.975,0.025))*sd(samp)/sqrt(n)#
+#
+    return(rbind(conf.t, conf.boot, conf.boot.adj))#
+}
+small sample size#
+n=20#
+#
+### check the difference between these methods#
+pop<-rexp(1000,rate=1/mu)#
+x<-sample(pop,n)#
+mean(pop)#
+compare.ci(x)
+sims <- 1000#
+n<-20  # sample size#
+#
+results <- matrix(FALSE, sims,3)#
+colnames(results) <- c("t-interval", "Bootstrap percentile", "Bootstrap centered")#
+# Be patient. This can take a while (about 1 minute). Wait until the prompt appears.#
+for(i in 1:sims){#
+    x <- rexp(n, rate=1/mu)#
+    y <- compare.ci(my.sample)#
+    for(j in 1:3){#
+        results[i,j] <- y[j,1] < mu & y[j,2] > mu#
+    }#
+}#
+#
+apply(results,2,sum)
+for(i in 1:sims){#
+    pop <- rexp(10000, rate=1/mu)#
+    x <- sample(pop,n)#
+    mu <- mean(pop)#
+    y <- compare.ci(x)#
+    for(j in 1:3){#
+        results[i,j] <- y[j,1] < mu & y[j,2] > mu#
+    }#
+}#
+#
+apply(results,2,sum)
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(100,350), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("Each CI created from ", B, "Bootstrap samples from a sample of size", n) )#
+  title(paste("95% Bootstrap confidence intervals"))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+  abline(v=qnorm(0.5, mean=220, sd=50), col="red", lwd=2) #
+} #
+n=30#
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+  x <- rnorm(n, mean=220, sd=50)#
+  bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=n,ncol=B)#
+  bootEst<-apply(bootsamples, 1, median) #
+  results[i,]<-quantile(bootEst, c(0.025, 0.975))  #
+}#
+cis(results,K)
+B=1000
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(100,350), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("Each CI created from ", B, "Bootstrap samples from a sample of size", n) )#
+  title(paste("95% Bootstrap confidence intervals"))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+  abline(v=qnorm(0.5, mean=220, sd=50), col="red", lwd=2) #
+} #
+n=30#
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+  x <- rnorm(n, mean=220, sd=50)#
+  bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=n,ncol=B)#
+  bootEst<-apply(bootsamples, 1, median) #
+  results[i,]<-quantile(bootEst, c(0.025, 0.975))  #
+}#
+cis(results,K)
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(170,270), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("Each CI created from ", B, "Bootstrap samples from a sample of size", n) )#
+  title(paste("95% Bootstrap confidence intervals"))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+  abline(v=qnorm(0.5, mean=220, sd=50), col="red", lwd=2) #
+} #
+n=30#
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+  x <- rnorm(n, mean=220, sd=50)#
+  bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=n,ncol=B)#
+  bootEst<-apply(bootsamples, 1, median) #
+  results[i,]<-quantile(bootEst, c(0.025, 0.975))  #
+}#
+cis(results,K)
+2cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(170,270), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("Each CI created from ", B, "Bootstrap samples from a sample of size", n) )#
+  title(paste("95% Bootstrap confidence intervals"))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+  abline(v=qnorm(0.5, mean=220, sd=50), col="red", lwd=2) #
+} #
+n=30#
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+  x <- rnorm(n, mean=220, sd=50)#
+  bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=n,ncol=B)#
+  bootEst<-apply(bootsamples, 2, median) #
+  results[i,]<-quantile(bootEst, c(0.025, 0.975))  #
+}#
+cis(results,K)
+cis=function(results,K=25){ #
+  lower=rep(0,K) #
+  upper=rep(0,K) #
+  plot(c(results[1,1],results[1,2]),c(0,K+1), type="n",xlim=c(170,270), #
+       ylab="number of   confidence intervals",#
+       xlab=paste("Each CI created from ", B, "Bootstrap samples from a sample of size", n) )#
+  title(paste("95% Bootstrap confidence intervals"))#
+  for ( i in (1:K)){ #
+    lower[i]=results[i,1] #
+    upper[i]=results[i,2] #
+    lines(c(lower[i],upper[i]),c(i,i)) }#
+  abline(v=qnorm(0.5, mean=220, sd=50), col="red", lwd=2) #
+} #
+n=30#
+K=50#
+results<-matrix(NA, nrow=K, ncol=2)#
+for (i in 1:K){#
+  x <- rnorm(n, mean=220, sd=50)#
+  bootsamples<-matrix(sample(x, size=n*B, replace=T), nrow=n,ncol=B)#
+  bootEst<-apply(bootsamples, 2, median) #
+  results[i,]<-quantile(bootEst, c(0.025, 0.975))  #
+}#
+cis(results,K)
+data(forbes)
+library(MASS)
+data(forbes)
+forbes
+x<-data(forbes)
+x[1,1]
+x
+x<-forbes
+x[1,1]
+?forbes
+?forbes

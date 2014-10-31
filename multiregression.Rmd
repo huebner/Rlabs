@@ -1,0 +1,155 @@
+Multiple regression: Baseball
+========================================================
+
+In many regression models the response variable $y$ may be related to more than one explanatory variable. The predictors $x_1, \dots x_k$ that have a significant effect can be incorporated in the model
+$$
+y=\beta_0 + \beta_1 x_1 +\dots + \beta_p x_p + \varepsilon
+$$
+To predict the number of wins for a professional baseball team data for the following variables were collected: *batavg= batting average, rbi=runs batted in, stole= number of stolen bases, strkout=number of struck out, era=earned run average, caught=number caught stealing bases, errors=number of errors.*
+
+```{r}
+wins1<-read.csv("baseball_wins.csv", header=T)
+```
+
+```{r echo=FALSE}
+wins2<-read.csv("BaseballStats_2005v2.csv", header=T)
+fit2<-lm(wins~era+homerun+error+batavg+stole+salary, wins2)
+step(fit2)
+fit0<-lm(wins~era+homerun+error+batavg, wins2)
+anova(fit0,fit2)
+```
+
+Regression analysis with all predictors:
+```{r}
+fit<-lm(wins~batavg+rbi+stole+strkout+caught+error+era, wins1)
+summary(fit)
+```
+What are the three variables with the most significant pvalues?
+
+```{r}
+sort(summary(fit)$coefficients[,4])[1:3]
+```
+
+Simple linear regression analysis with the two most significant predictors:
+```{r}
+fit1<-lm(wins~era, wins1)
+summary(fit1)
+fit2<-lm(wins~rbi, wins1)
+summary(fit2)
+```
+ The R-squared value for all seven predictors is `r summary(fit)$adj.r.squared` while the R-squared for *era* is  `r summary(fit1)$adj.r.squared` and for *rbi* `r summary(fit2)$adj.r.squared`.
+ 
+A model with the these two variables is
+
+```{r}
+fit3<-lm(wins~era+rbi, wins1)
+summary(fit3)
+```
+This has R-squared value `r summary(fit3)$adj.r.squared`.
+
+Is it possible to find a third variable, which together with *era* and *rbi*, improves R-squared?
+
+```{r}
+fitx<-lm(wins~era+rbi+batavg, wins1); summary(fitx)
+fitx<-lm(wins~era+rbi+stole, wins1); summary(fitx)
+fitx<-lm(wins~era+rbi+strkout, wins1); summary(fitx)
+fitx<-lm(wins~era+rbi+caught, wins1); summary(fitx)
+fitx<-lm(wins~era+rbi+error, wins1); summary(fitx)
+```
+
+The multiple regression model with the highest R-squared includes the variables *era, rbi, error*
+with adjusted R-squared  `r summary(fitx)$adj.r.squared`.
+
+
+Confidence intervals and Anova table is given as follows:
+
+```{r}
+fitx<-lm(wins~era+rbi+error, wins1);
+confint(fitx)
+anova(fitx)
+```
+
+To test the utility of the full model against the null model the hypotheses are
+$$
+\begin{align}
+H_0: & y=\beta_0 + \varepsilon \\
+H_A: & y=\beta_0 + \beta_1 \mbox{era} + \beta_1 \mbox{rbi} + \beta_1 \mbox{error} + \varepsilon
+\end{align}
+$$
+
+The ANOVA table is given by
+
+```{r}
+fitx<-lm(wins~era+rbi+error, wins1);
+xx<-anova(fitx)
+msr<-sum(xx[1:3,2])/sum(xx[1:3,1])
+fvalue<-msr/xx[4,3]
+df1<-sum(xx[1:3,1])
+df2<-sum(xx[4,1])
+pval<-1-pf(fvalue,df1,df2)
+```
+
+
+----------------------------------------------------------------------------------------------
+|              |      DF     	|         SS         	|      MS     	|   F value  	|   P(>F)  	|
+|------------	| :-----------:	|  :------------------:	|  :-----------:	|  :----------:	|    :--------:	|
+| regression 	|   `r df1`   	| `r sum(xx[1:3,2])` 	| `r msr`     	| `r fvalue` 	| `r pval` 	|
+| residual   	| `r xx[4,1]` 	| `r xx[4,2]`        	| `r xx[4,3]` 	|            	|          	|
+----------------------------------------------------------------------------------------------
+
+
+
+
+A residual plot and a normal probability plot for residuals assesses the validity of model
+
+```{r fig.width=7, fig.height=6}
+fit.lm<-lm(wins~era+rbi+error, wins1)
+par(mfrow=c(2,2))
+plot(fit)
+par(mfrow=c(1,1))
+```
+
+If one wants to test the model with *era* against a model with *era, rbi,* and *error*, then the  the full model has $p=3$ predictors and the partial model has $l=1$ predictors
+
+$$
+F = \frac{(SSR_{\mbox{part}} - SSR_{\mbox{full}})/(p-l)}{SSE/(n-p-1)}
+$$
+
+and the ANOVA table is as follows:
+
+```{r}
+fitx<-lm(wins~era+rbi+error, wins1);
+fity<-lm(wins~era, wins1);
+anova(fitx)
+anova(fity, fitx)
+xx<-anova(fitx)
+ssr<-sum(xx[2:4,2])-xx[4,2]
+msr<-ssr/(sum(xx[1:3,1])-sum(xx[1,1]))
+fvalue<-msr/xx[4,3]
+df1<-sum(xx[1:3,1])-sum(xx[1,1])
+df2<-sum(xx[4,1])
+pval<-1-pf(fvalue,df1,df2)
+```
+
+
+----------------------------------------------------------------------------------------------
+|              |      DF       |         SS         	|      MS     	|   F value  	|   P(>F)  	|
+|------------	| :-----------:	|  :------------------:	|  :-----------:	|  :----------:	|    :--------:	|
+| regression 	|   `r df1`   	| `r sum(xx[2:3,2])` 	| `r msr`     	| `r fvalue` 	| `r pval` 	|
+| residual   	| `r xx[4,1]` 	| `r xx[4,2]`        	| `r xx[4,3]` 	|            	|          	|
+----------------------------------------------------------------------------------------------
+
+
+A stepwise regression model selection follows a similar pattern of reasoning
+
+```{r}
+fit<-lm(wins~batavg+rbi+stole+strkout+caught+error+era, wins1)
+step(fit)
+```
+
+
+The relevant variables from the second baseball dataset are
+```{r}
+fit<-lm(wins~batavg+stole+error+era+homerun+salary, wins2)
+step(fit)
+```

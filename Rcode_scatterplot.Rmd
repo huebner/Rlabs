@@ -1,0 +1,67 @@
+---
+output: word_document
+---
+Visualizing association between two quantitative variables
+==============================================================
+M. Huebner 2014-03-28
+-------------------------------------------------------------
+
+Load crime data from 50 states.
+```{r }
+data(USArrests)
+crime<-USArrests
+```
+To check what information is available in the dataset you an type `?USArrests`. 
+The data set contains
+* Murder arrests per 100,000
+* Assault arrests per 100,000
+* Percent urban population
+* Rape arrests per 100,000
+
+Make a scatter plot of % urban population versus number of murder arrests. The ranges of the x-axis and y-axis are chosen automatically, or can be defined with xlim and ylim.
+
+```{r}
+plot(Murder~UrbanPop, data=crime, xlim=c(15,100), ylim=c(0,20), pch=19, col="blue")
+# label the points with the state
+with(crime, text(Murder~UrbanPop, labels = row.names(crime), pos = 4, cex=0.5))
+```
+
+Which states have higher arrests for murder and assault?
+```{r}
+plot(Murder~Assault, data=crime, xlim=c(40,400),  ylim=c(0,20), xlab="Assault per 100,000", ylab="Murder per 100,000")
+with(crime, text(Murder~Assault, labels = row.names(crime), pos = 4, cex=0.5))
+```
+
+What is it in Michigan?
+```{r}
+crime$state<-rownames(crime)
+crime[crime$state=="Michigan",]
+```
+
+```{r }
+#fig.width=7, fig.height=6
+# Label Michigan in the figure
+plot(Murder~Assault, data=crime, xlim=c(40,400),  ylim=c(0,20), xlab="Assault per 100,000", ylab="Murder per 100,000")
+with(crime, text(Murder~Assault, labels = row.names(crime), pos = 4, cex=0.5))
+indx<-which(crime$state=="Michigan")
+points(crime$Assault[indx], crime$Murder[indx], pch=19, col="red")
+```
+
+
+## Machine learning: principle component analysis (PCA)
+```{r}
+apply(USArrests, 2, mean)
+apply(USArrests, 2, var)
+```
+A variable with larger variance, such as Assault, would dominate the principal components.  So  variables should be standardized before PCA. This step is built-in for the following function.
+
+```{r }
+pca.out = prcomp(USArrests, scale = TRUE)
+pca.out
+biplot(pca.out, scale = 0, cex=0.6)
+```
+
+### The states with larger crime rates are towards the left.  States with larger proportion of urban population are towards the bottom.
+
+
+
